@@ -1,0 +1,78 @@
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Tooling.Connector;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DynamicPluginRegistrationConsole
+{
+    class Program
+    {
+        static IOrganizationService service;
+        static void Main(string[] args)
+        {
+            IOrganizationService _service = GetCRMService("Url=https://cutm.crm8.dynamics.com/;UserName=140301csr008@cutm.ac.in;Password=L@l1th@2020;AuthType=Office365;");
+            service = _service;
+            Entity assembly = service.Retrieve("plugintype", new Guid("e70945366534447ab99ca0f57d5453e1"), new ColumnSet(true));
+
+            if (assembly.Attributes.Contains("plugintypeid"))
+            {
+                Guid pluginID = Guid.Empty;
+                Entity pluginType = new Entity("plugintype");
+                pluginID = (Guid)(assembly.Attributes["plugintypeid"]);
+
+                Guid messageId = new Guid("9EBDBB1B-EA3E-DB11-86A7-000A3A5473E8");
+
+                Guid messageFitlerId = new Guid("C2C5BB1B-EA3E-DB11-86A7-000A3A5473E8");
+
+                Entity step = new Entity("sdkmessageprocessingstep");
+                step["name"] = "Create Account";
+                step["configuration"] = "Create account record";
+
+                step["invocationsource"] = new OptionSetValue(0);
+                step["sdkmessageid"] = new EntityReference("sdkmessage", messageId);
+
+                step["supporteddeployment"] = new OptionSetValue(0);
+                step["plugintypeid"] = new EntityReference("plugintype", pluginID);
+
+                step["mode"] = new OptionSetValue(0);
+                step["rank"] = 1;
+                step["stage"] = new OptionSetValue(20);
+
+                step["sdkmessagefilterid"] = new EntityReference("sdkmessagefilter", messageFitlerId);
+                Guid stepId = service.Create(step);
+            }
+        }
+        
+        private static IOrganizationService GetCRMService(string crmURL)
+        {
+            try
+            {
+                // For Dynamics 365 Customer Engagement V9.X, set Security Protocol as TLS12
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                var service = new CrmServiceClient(crmURL);
+                return service;
+            }
+            catch (Exception e)
+            {
+                StringBuilder strErrorDetails = new StringBuilder();
+                strErrorDetails.AppendFormat(" Organization URL: {0}", crmURL);
+
+                if (e.InnerException != null && !string.IsNullOrEmpty(e.InnerException.Message))
+                    strErrorDetails.AppendLine(string.Format("InnerException: {0}", e.InnerException.Message));
+                if (!string.IsNullOrEmpty(e.Message))
+                    strErrorDetails.AppendLine(string.Format("Message: {0}", e.Message));
+                if (!string.IsNullOrEmpty(e.StackTrace))
+                    strErrorDetails.AppendLine(string.Format("StackTrace: {0}", e.StackTrace));
+
+                throw new Exception($"Error occurred in GetCRMService. {strErrorDetails.ToString()}", e);
+            }
+        }
+    }
+}

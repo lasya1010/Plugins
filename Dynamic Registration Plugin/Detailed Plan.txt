@@ -1,0 +1,27 @@
+DTD : 30/07/18
+
+PROJECT NAME : Dynamic Registration Plugin
+TASK NAME : Dynamic Plugin Registration Plugin
+Estimation Hours - 8 hours
+
+TASK DESCRIPTION : Create Dynamic Registration Plugin for the custom Entity 
+					
+Credentials : URL : https://cutm.crm8.dynamics.com/
+			  User Id : 140301csr008@cutm.ac.in
+			  Password : L@L1th@2020
+			  
+STEPS : 	- Create a Custom Entity in Crm named "Entity Schema Name" with "Name" field. ( DONE )
+			- Create a Plugin named "ServiceEndPointPlugin" and name its class name as "SendEntityContextAzure"
+				- Do research on how to connect plugin with Azure through Plugin
+				- Do the necessary coding 
+				- Register the DLL to the Plugin Registration Tool
+				- Note : Do not register the step for this generated Assembly DLL
+			- Create another Plugin named "DynamicRegistrationPlugin" and name its class as "DynamicPlugin"
+				- Do research on how to register the step dynmaically for the crm 
+				- Do the necessary coding
+				- Register the DLL to the Plugin
+				- Register the Create step for the custom entity on its Creation
+				
+			On creation of record for custom entity, generate dynmaically step for the "ServiceEndPointPlugin" 
+			Registered Steps must be : Create, Update, Delete.
+			

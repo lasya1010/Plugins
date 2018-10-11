@@ -1,0 +1,69 @@
+PROJECT NAME : Create a Azure function and fetch the data through the JSON file and then connect to the CRM, update the JSON data with the
+				given requirement.
+CREDENTIALS : URL:
+			  UserId:
+		      Password: 
+			  
+IMPLEMENTATION STEPS : 1. Create a Azure function  (Done)
+					   2. Create CRM connection (Done)
+					   3. Check both the Connections (Done)
+					   4. Send JSON data through Service Bus Explorer (Done)
+					   5. Update the data (Done)
+					   
+STEPS IMPLEMENTED :
+	1. Create a Azure function :
+		- Open Visual Studio 2017 and Create a new project "Class Library" and name it as your given project name.
+		- Install the packages required packages : 	
+				: Microsoft.Azure.KeyVault
+				: Microsoft.Azure.ServiceBus
+				: Microsoft.Azure.Services.AppAuthentication
+				: Newtonsoft.Json
+		- Create a static method so that we can pass the Base URL to it & name it as "GetValueFromAzureVault". 
+		- AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
+			: It gets access to tokens to authenticate to Azure services using the developer's (Azure AD/Microsoft)account during development, and using 
+			  the app's identity when deployed to Azure
+		- Always make a habbit of writting the code in "TRY" & "CATCH" block,
+		- "var keyVault = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));"
+			: KeyVaultClient - AzureKeyVault helps us to securely store and manage application secrets
+			: The above line is important to fetch the BaseURL through the secreat token.
+		- "value = keyVault.GetSecretAsync(vaultBaseURL).Result.Value;"
+			: Fetch the value from the BaseURL and setting back to the value.
+		- Return the value.
+			
+	2. Create CRM connection 
+		- Create another "Class Library" for same solution for the CRM connection.
+		- Install the necessary packages.
+		- Create a method "public static IOrganizationService GetCRMService(string crmURL)" 
+		- Do the CRM Connection here
+		
+	3. Check both the Connections
+		- Create Azure function and select the mode according to the requirement (Eg: Queue,Topic)
+		- Install the packages required packages : 	
+				: Microsoft.Azure.WebJobs.ServiceBus ( If we set the mode as "Empty" then we need to install this package otherwise the package gets installed while creating the Azure Function)
+				: Microsoft.NET.Sdk.Functions
+				: Microsoft.CrmSdk.CoreAssemblies
+		- local.setting.json
+				: Set the KeyVaultUrl & ServiceBusConnection & QueueName
+		- Create the class named "JsonResult" and set its parameters
+		- Go to created Azure Function then set the parameters 
+			"public static void Run([ServiceBusTrigger("%ErptoCrmQueueName%", AccessRights.Manage, Connection = "ServiceBusConnection")]string queueMsg, ILogger log)"
+		[NOTE : While creating the Function, if the function is for queue then we dont need to give the subscription ]
+		- Check if the string is empty or not 
+			: IF YES  : then call function "BindData(queueMsg, log)"
+			: IF NO	: Send the message that queue is empty.
+		- BindData :
+			: Getting the JSON data and setting back to JsonResult 
+				"JsonResult jObject = JsonConvert.DeserializeObject<JsonResult>(queueMsg);"
+			: Fetching the CRMURL through the KeyVault 
+				"crmURL = AzureManager.GetValueFromAzureVault(ConfigurationManager.AppSettings["KeyVaultUrl"] + jObject.OrgUniqueName);"
+			: Check whether the connection is established or not 
+				"var service = CRMManager.GetCRMService(crmURL);"
+	
+	4. Send JSON data through Service Bus Explorer	
+		- Open the ServiceBus Explorer and create the connection through the given Connection String
+		- Pass the JSON message.
+		
+	5. Update the data 
+		- Finally Update the JSON Data.
+		
+		

@@ -1,0 +1,64 @@
+DTD : 25/07/18
+
+PROJECT NAME : Legal Solutions
+TASK NAME : Legal Lawyer -Plugin (Project + Transaction Entity)
+Plugin Registration Tool : 9.0
+Estimation - 6 hours
+
+TASK DESCRIPTION : Following fields on Legal Project Table needs to get updated when related transactions get updated/created/deleted: 
+					-	Sum of all (Open transactions)
+					o	Sum of all transactions with the field Amount as core
+
+					-	Deductible invoiced
+					o	Sum of all transactions with the field amount as core
+					o	Order number contains data 
+					o	Transaction type equals deductible
+
+					-	Expenses Invoiced
+					o	Sum of all transactions with the field amount as core
+					o	Order number contains data 
+					o	Transaction type equals expense
+
+					-	Prepayment Invoiced
+					o	Sum of all transactions with the field amount as core
+					o	Order number contains data 
+					o	Transaction type equals prepayment
+					
+					
+Create Console Application for the following.
+					
+Credentials : URL : https://devlegalsolution.crm4.dynamics.com
+			  User Id : hardik@avantit.no
+			  Password : WdScbdQK12$
+			  
+LOGICAL Part : 		
+		
+		Entity Name : Legal Project : avantit_legalproject							
+					  Sum of Open transactions : avantit_sumopentransactions
+					  Deductible invoiced : avantit_deductibleinvoiced
+					  Expenses Invoiced : avantit_expensesinvoiced
+					  Prepayment Invoiced : avantit_prepaymentinvoiced
+							
+		Entity Name : Transactions : avantit_transaction
+					  Amount : avantit_amount (Decimal Number)
+					  Status : statecode ( 0 ["Open"] )
+					  Order Product :  avantit_orderproduct (LookUp Field)
+						-> Product Type : avantit_producttype ( Option set )
+							- Deductible : 174470001
+							- Expenses : 174470000
+							- Prepayment : 174470002
+					  
+					 
+STEPS : - We will need to fetch Project details from  Transaction Entity. (avantit_transaction.avantit_legalproject)
+		- Fetch All Transaction Entity from avantit_transaction.avantit_legalproject using Fetch XML 		
+		- Using Linq we will get Sum of all Transaction, Sum of Deductible invoiced, Sum of Expenses Invoiced, 
+		  Sum of Prepayment Invoiced.
+		- Set it back to the LegaL project.
+		
+		
+					  
+					  A61E58AA-6C8E-E811-A960-000D3AB311F1
+					  2C9371DD-9187-E811-A95D-000D3AB31AA3
+					  
+					  
+					  

@@ -1,0 +1,9 @@
+On Creation of New Accounts fetch the name and phone number and check if these record exists or not, if exists then give alert 
+
+	- Fetch the details of Account Entity
+	- Check whether it contains the name and telephone1
+		IF YES 
+			- Using FilterQueryExpression, filter the data by applying condition on it, filter only if the values matches
+			- Retrive all the Filtered values of record
+			- If the values are not null or greater than zero throw exception 
+			- Or Else do nothing .
